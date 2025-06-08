@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"  
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model TeacherProfile {
+  id          String   @id @default(cuid())
+  authId      String   @unique @db.Uuid
+  firstName   String
+  lastName    String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  groups      Group[]
+}
+
+model StudentProfile {
+  id          String   @id @default(cuid())
+  authId      String   @unique @db.Uuid
+  firstName   String
+  lastName    String
+  experience  Int @default(0)
+  level       Int @default(1)
+
+  groupId     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  badges      StudentBadge[]
+  challenges ChallengeAttempt[]
+  group      Group? @relation(fields: [groupId], references: [id])
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  xpRequired  Int
+  iconUrl     String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  students    StudentBadge[]
+}
+
+model StudentBadge {
+  id          String   @id @default(cuid())
+  studentId   String
+  badgeId     String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+  badge       Badge          @relation(fields: [badgeId], references: [id])
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  teacherId   String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teacher     TeacherProfile @relation(fields: [teacherId], references: [id])
+  students    StudentProfile[]
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  difficulty  ChallengeDifficulty @default(EASY)
+  type        String 
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ChallengeQuestions ChallengeQuestion[]
+  ChallengeAttempts ChallengeAttempt[]
+}
+
+model ChallengeQuestion {
+  id          String   @id @default(cuid())
+  challengeId String
+  question    String
+  type        QuestionType
+  answer      String 
+  xpReward    Int
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  options     ChallengeQuestionOption[]
+  attempts    ChallengeAttemptQuestion[]
+}
+
+model ChallengeQuestionOption {
+  id          String   @id @default(cuid())
+  questionId  String
+  optionText  String
+  isCorrect   Boolean
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  question    ChallengeQuestion @relation(fields: [questionId], references: [id])
+}
+
+model ChallengeAttempt {
+  id          String   @id @default(cuid())
+  studentId   String
+  challengeId String
+  status      ChallengeAttemptStatus @default(IN_PROGRESS)
+  xpEarned    Int
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+  challenge   Challenge      @relation(fields: [challengeId], references: [id])
+  questions   ChallengeAttemptQuestion[]
+}
+
+model ChallengeAttemptQuestion {
+  id          String   @id @default(cuid())
+  attemptId   String
+  questionId  String
+  answer      String
+  isCorrect   Boolean
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attempt     ChallengeAttempt @relation(fields: [attemptId], references: [id])
+  question    ChallengeQuestion @relation(fields: [questionId], references: [id])
+}
+
+enum ChallengeDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  INSERT_NUMBER
+  TRUE_FALSE
+}
+
+enum ChallengeAttemptStatus {
+  COMPLETED
+  IN_PROGRESS
+  FAILED
+}
+

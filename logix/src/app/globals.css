@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+html {
+  scroll-behavior: smooth;
+}
+
+@theme {
+  /* Colores principales basados en la paleta de azules */
+  --color-primary: oklch(27% 0.15 265); /* Azul oscuro (navy) */
+  --color-primary-light: oklch(35% 0.15 265);
+  --color-primary-dark: oklch(20% 0.15 265);
+
+  --color-secondary: oklch(40% 0.18 260); /* Azul medio */
+  --color-secondary-light: oklch(50% 0.18 260);
+  --color-secondary-dark: oklch(30% 0.18 260);
+
+  --color-accent: oklch(65% 0.2 240); /* Azul brillante */
+  --color-accent-light: oklch(75% 0.2 240);
+  --color-accent-dark: oklch(55% 0.2 240);
+
+  --color-highlight: oklch(85% 0.15 230); /* Azul claro */
+  --color-highlight-light: oklch(90% 0.15 230);
+  --color-highlight-dark: oklch(80% 0.15 230);
+
+  /* Colores neutros */
+  --color-light: oklch(99% 0.005 240);
+  --color-dark: oklch(25% 0.01 240);
+  --color-gray-light: oklch(95% 0.01 240);
+  --color-gray: oklch(80% 0.01 240);
+  --color-gray-dark: oklch(50% 0.01 240);
+
+  /* Colores de estado */
+  --color-success: oklch(65% 0.2 150);
+  --color-error: oklch(65% 0.2 25);
+  --color-warning: oklch(75% 0.2 80);
+
+  /* Colores de interfaz */
+  --color-background: var(--color-dark);
+  --color-foreground: var(--color-light);
+  --color-border: var(--color-gray);
+  --color-scrollbar: var(--color-accent);
+}
