@@ -67,7 +67,7 @@ export const updateGroupAPI = async (id, data) => {
 export const deleteGroupAPI = async (id) => {
   const response = await fetch(`${BASE_URL}/groups/${id}`, {
     method: 'DELETE',
-    credentials: 'include', // 👈 manda la cookie automáticamente
+    credentials: 'include',
   });
 
   if (!response.ok) {
