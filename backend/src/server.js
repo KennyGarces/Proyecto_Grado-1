@@ -20,11 +20,11 @@
 
   // Configuración de CORS
   const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // ajusta según tu frontend
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
     credentials: true, // permite cookies
   };
 
-  // Si está en producción detrás de un proxy (Heroku, Vercel, Nginx, etc.)
+  // Si está en producción detrás de un proxy 
   if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
   }
