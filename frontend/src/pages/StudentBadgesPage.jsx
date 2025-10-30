@@ -44,8 +44,13 @@ function StudentBadges() {
     if (!user) return;
 
     const fetchStats = async () => {
+      //CAMBIAR EN EL SERVIDOR
       try {
-        const res = await fetch(`http://localhost:3000/api/stats/student/${user.id}`);
+      const res = await fetch(`/api/stats/student/${user.id}`, {
+        credentials: 'include'
+      });
+
+      
         const data = await res.json();
         setStats(data);
         setLoading(false);

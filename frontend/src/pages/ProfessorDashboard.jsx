@@ -78,7 +78,7 @@ function ProfessorDashboard() {
     } catch (error) { setMessage(error.message); }
   };
 
-    // Crear pregunta
+  // Crear pregunta
  const handleCreateQuestion = async (e) => {
   e.preventDefault();
 
@@ -115,6 +115,8 @@ function ProfessorDashboard() {
     setMessage(error.message);
   }
 };
+
+
 
  // Crear misión
   const handleCreateMission = async (e) => {
@@ -174,7 +176,7 @@ const handleUpdateQuestion = (q) => {
       opcionesParsed = raw.map(opt =>
         typeof opt === "string"
           ? { type: "text", content: opt }
-          : opt // si ya es { type, content }
+          : opt 
       );
     } catch (e) {
       console.error("Error parseando opciones:", e);
@@ -549,39 +551,77 @@ const handleSubmitEditAssignment = async (e) => {
               </>
             )}
 
-  {/* Crear Pregunta */}
-  {openModal === 'createQuestion' && (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-slate-800 w-11/12 h-[90vh] rounded-xl p-6 overflow-y-auto">
-        <h2 className="text-3xl font-bold mb-6">Crear Pregunta</h2>
+ 
+{/* Crear Pregunta */}
+{openModal === 'createQuestion' && (
+  <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div className="bg-slate-800 w-11/12 h-[90vh] rounded-xl p-6 overflow-y-auto">
+      <h2 className="text-3xl font-bold mb-6">Crear Pregunta</h2>
 
-        <form onSubmit={handleCreateQuestion} className="grid grid-cols-2 gap-6">
-          {/* Columna Izquierda */}
-          <div className="space-y-4">
-            {/* Título */}
+      <div className="space-y-2 mb-4">
+        {(!newQuestion.pillar || newQuestion.pillar.length === 0) && (
+          <div className="p-3 bg-red-900 border border-red-600 rounded-lg flex items-center gap-2">
+            ❌ Debes seleccionar al menos un pilar
+          </div>
+        )}
+        
+        {!newQuestion.respuesta_correcta && (
+          <div className="p-3 bg-red-900 border border-red-600 rounded-lg flex items-center gap-2">
+            ❌ Debes especificar la respuesta correcta
+          </div>
+        )}
+        
+        {(newQuestion.tipo === 'multiple_option' && newQuestion.opciones?.length === 0) && (
+          <div className="p-3 bg-red-900 border border-red-600 rounded-lg flex items-center gap-2">
+            ❌ Agrega al menos una opción para preguntas de opción múltiple
+          </div>
+        )}
+        
+        {(newQuestion.tipo === 'multiple_option' && newQuestion.opciones?.length > 0 && !newQuestion.respuesta_correcta) && (
+          <div className="p-3 bg-red-900 border border-red-600 rounded-lg flex items-center gap-2">
+            ❌ Selecciona la respuesta correcta marcando el radio button en una de las opciones
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={handleCreateQuestion} className="grid grid-cols-2 gap-6">
+        {/* Columna Izquierda */}
+        <div className="space-y-4">
+          {/* Título */}
+          <div>
             <input
               type="text"
-              placeholder="Título"
+              placeholder="Título *"
               value={newQuestion.titulo}
               onChange={e => setNewQuestion(prev => ({ ...prev, titulo: e.target.value }))}
-              className="w-full p-3 rounded border border-slate-600 bg-slate-700 focus:ring-2 focus:ring-green-500"
+              className={`w-full p-3 rounded border bg-slate-700 focus:ring-2 focus:ring-green-500 ${
+                !newQuestion.titulo ? 'border-red-500' : 'border-slate-600'
+              }`}
               required
             />
-             {/* Pregunta principal */}
-          <input
-            type="text"
-            placeholder="Pregunta principal (enunciado corto)"
-            value={newQuestion.enunciado}
-            onChange={e =>
-              setNewQuestion(prev => ({ ...prev, enunciado: e.target.value }))
-            }
-            className="w-full p-3 rounded border border-slate-600 bg-slate-700 focus:ring-2 focus:ring-green-500"
-            required
-          />
+            {!newQuestion.titulo && <p className="text-red-400 text-sm mt-1">Campo obligatorio</p>}
+          </div>
+          
+          {/* Pregunta principal */}
+          <div>
+            <input
+              type="text"
+              placeholder="Pregunta principal (enunciado corto) *"
+              value={newQuestion.enunciado}
+              onChange={e =>
+                setNewQuestion(prev => ({ ...prev, enunciado: e.target.value }))
+              }
+              className={`w-full p-3 rounded border bg-slate-700 focus:ring-2 focus:ring-green-500 ${
+                !newQuestion.enunciado ? 'border-red-500' : 'border-slate-600'
+              }`}
+              required
+            />
+            {!newQuestion.enunciado && <p className="text-red-400 text-sm mt-1">Campo obligatorio</p>}
+          </div>
+
           {/* Enunciado enriquecido */}
           <div className="space-y-3">
             <h3 className="font-semibold">Enunciado extendido</h3>
-
             {(newQuestion.question_content || []).map((block, i) => (
               <div key={i} className="flex gap-2 items-start">
                 {/* Selector tipo */}
@@ -619,52 +659,52 @@ const handleSubmitEditAssignment = async (e) => {
                 ) : (
                   <div
                     className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
-    ${block.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...newQuestion.question_content];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setNewQuestion(prev => ({ ...prev, question_content: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
-    }
-  }}
-  onDragOver={(e) => e.preventDefault()}
-  onDragEnter={() => {
-    const updated = [...newQuestion.question_content];
-    updated[i].isDragging = true;
-    setNewQuestion(prev => ({ ...prev, question_content: updated }));
-  }}
-  onDragLeave={() => {
-    const updated = [...newQuestion.question_content];
-    updated[i].isDragging = false;
-    setNewQuestion(prev => ({ ...prev, question_content: updated }));
-  }}
->
-  {block.content ? (
-    <div className="space-y-2">
-      <img src={block.content} alt="enunciado" className="max-h-40 mx-auto rounded" />
-      <button
-        type="button"
-        onClick={() => {
-          const updated = [...newQuestion.question_content];
-          updated[i].content = "";
-          setNewQuestion(prev => ({ ...prev, question_content: updated }));
-        }}
-        className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
-      >
-        Quitar imagen
-      </button>
-    </div>
-  ) : (
-    "Arrastra y suelta una imagen aquí"
-  )}
+                    ${block.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
+                    onDrop={async (e) => {
+                      e.preventDefault();
+                      const file = e.dataTransfer.files[0];
+                      if (file) {
+                        try {
+                          const { path } = await uploadFile(file);
+                          const updated = [...newQuestion.question_content];
+                          updated[i].content = path;
+                          updated[i].isDragging = false;
+                          setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                        } catch (err) {
+                          console.error("Error subiendo imagen:", err);
+                        }
+                      }
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDragEnter={() => {
+                      const updated = [...newQuestion.question_content];
+                      updated[i].isDragging = true;
+                      setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                    }}
+                    onDragLeave={() => {
+                      const updated = [...newQuestion.question_content];
+                      updated[i].isDragging = false;
+                      setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                    }}
+                  >
+                    {block.content ? (
+                      <div className="space-y-2">
+                        <img src={block.content} alt="enunciado" className="max-h-40 mx-auto rounded" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = [...newQuestion.question_content];
+                            updated[i].content = "";
+                            setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                          }}
+                          className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
+                        >
+                          Quitar imagen
+                        </button>
+                      </div>
+                    ) : (
+                      "Arrastra y suelta una imagen aquí"
+                    )}
                   </div>
                 )}
 
@@ -703,59 +743,71 @@ const handleSubmitEditAssignment = async (e) => {
               ➕ Añadir bloque
             </button>
           </div>
+        </div>
 
+        {/* Columna Derecha */}
+        <div className="space-y-6">
+          {/* Tipo */}
+          <select
+            value={newQuestion.tipo}
+            onChange={e => setNewQuestion(prev => ({ ...prev, tipo: e.target.value, respuesta_correcta: '' }))}
+            className="w-full p-3 rounded border border-slate-600 bg-slate-700 focus:ring-2 focus:ring-green-500"
+          >
+            <option value="multiple_option">Opción Múltiple</option>
+            <option value="true_false">Verdadero/Falso</option>
+            <option value="numeric">Numérica</option>
+          </select>
+
+          {/* Pilares - CON INDICADOR VISUAL */}
+          <div>
+            <button
+              type="button"
+              className={`w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-2 ${
+                (!newQuestion.pillar || newQuestion.pillar.length === 0) ? 'ring-2 ring-red-500' : ''
+              }`}
+              onClick={() => setNewQuestion(prev => ({ ...prev, showPilarOptions: !prev.showPilarOptions }))}
+            >
+              {newQuestion.showPilarOptions ? 'Ocultar pilares' : 'Seleccionar pilares *'}
+            </button>
+            
+            {newQuestion.showPilarOptions && (
+              <div className="grid grid-cols-2 gap-2 border p-2 rounded bg-slate-700">
+                {['Abstracción','Descomposición','Pensamiento Algorítmico','Evaluación','Reconocimiento de Patrones'].map((p, i) => (
+                  <label key={i} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newQuestion.pillar?.includes(p)}
+                      onChange={() => {
+                        if (newQuestion.pillar?.includes(p)) {
+                          setNewQuestion(prev => ({ ...prev, pillar: prev.pillar.filter(x => x !== p) }));
+                        } else {
+                          setNewQuestion(prev => ({ ...prev, pillar: [...(prev.pillar || []), p] }));
+                        }
+                      }}
+                      className="accent-yellow-400"
+                    />
+                    {p}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Columna Derecha */}
-          <div className="space-y-6">
-            {/* Tipo */}
-            <select
-              value={newQuestion.tipo}
-              onChange={e => setNewQuestion(prev => ({ ...prev, tipo: e.target.value, respuesta_correcta: '' }))}
-              className="w-full p-3 rounded border border-slate-600 bg-slate-700 focus:ring-2 focus:ring-green-500"
-            >
-              <option value="multiple_option">Opción Múltiple</option>
-              <option value="true_false">Verdadero/Falso</option>
-              <option value="numeric">Numérica</option>
-            </select>
-
-            {/* Pilares */}
-            <div>
-              <button
-                type="button"
-                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded mb-2"
-                onClick={() => setNewQuestion(prev => ({ ...prev, showPilarOptions: !prev.showPilarOptions }))}
-              >
-                {newQuestion.showPilarOptions ? 'Ocultar pilares' : 'Seleccionar pilares'}
-              </button>
-              {newQuestion.showPilarOptions && (
-                <div className="grid grid-cols-2 gap-2 border p-2 rounded bg-slate-700">
-                  {['Abstracción','Descomposición','Pensamiento Algorítmico','Evaluación','Reconocimiento de Patrones'].map((p, i) => (
-                    <label key={i} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={newQuestion.pillar?.includes(p)}
-                        onChange={() => {
-                          if (newQuestion.pillar?.includes(p)) {
-                            setNewQuestion(prev => ({ ...prev, pillar: prev.pillar.filter(x => x !== p) }));
-                          } else {
-                            setNewQuestion(prev => ({ ...prev, pillar: [...(prev.pillar || []), p] }));
-                          }
-                        }}
-                        className="accent-yellow-400"
-                      />
-                      {p}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Opciones */}
-            {newQuestion.tipo === 'multiple_option' && (
-              <div className="space-y-3">
+          {/* Opciones - CON VALIDACIÓN VISUAL */}
+          {newQuestion.tipo === 'multiple_option' && (
+            <div className="space-y-3">
+              <div className={`p-3 rounded ${
+                (newQuestion.opciones?.length === 0 || (newQuestion.opciones?.length > 0 && !newQuestion.respuesta_correcta)) 
+                ? 'bg-red-900/30 border border-red-600' : 'bg-slate-700'
+              }`}>
+                <p className="font-semibold mb-2">
+                  Opciones * 
+                  {newQuestion.opciones?.length === 0 && <span className="text-red-400 ml-2">Agrega al menos una opción</span>}
+                  {newQuestion.opciones?.length > 0 && !newQuestion.respuesta_correcta && <span className="text-red-400 ml-2">Selecciona la respuesta correcta</span>}
+                </p>
+                
                 {(newQuestion.opciones || []).map((opt, i) => (
-                  <div key={i} className="flex gap-2 items-center">
+                  <div key={i} className="flex gap-2 items-center mb-2">
                     {/* Selector tipo */}
                     <select
                       value={opt.type}
@@ -784,55 +836,55 @@ const handleSubmitEditAssignment = async (e) => {
                         className="flex-1 p-2 rounded border border-slate-600 bg-slate-700"
                       />
                     ) : (
- <div
-  className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
-    ${opt.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...newQuestion.opciones];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setNewQuestion(prev => ({ ...prev, opciones: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
-    }
-  }}
-  onDragOver={(e) => e.preventDefault()}
-  onDragEnter={() => {
-    const updated = [...newQuestion.opciones];
-    updated[i].isDragging = true;
-    setNewQuestion(prev => ({ ...prev, opciones: updated }));
-  }}
-  onDragLeave={() => {
-    const updated = [...newQuestion.opciones];
-    updated[i].isDragging = false;
-    setNewQuestion(prev => ({ ...prev, opciones: updated }));
-  }}
->
-  {opt.content ? (
-    <div className="space-y-2">
-      <img src={opt.content} alt="preview" className="max-h-20 mx-auto rounded" />
-      <button
-        type="button"
-        onClick={() => {
-          const updated = [...newQuestion.opciones];
-          updated[i].content = "";
-          setNewQuestion(prev => ({ ...prev, opciones: updated }));
-        }}
-        className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
-      >
-        Quitar imagen
-      </button>
-    </div>
-  ) : (
-    "Arrastra y suelta una imagen aquí"
-  )}
-</div>
+                      <div
+                        className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
+                          ${opt.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
+                        onDrop={async (e) => {
+                          e.preventDefault();
+                          const file = e.dataTransfer.files[0];
+                          if (file) {
+                            try {
+                              const { path } = await uploadFile(file);
+                              const updated = [...newQuestion.opciones];
+                              updated[i].content = path;
+                              updated[i].isDragging = false;
+                              setNewQuestion(prev => ({ ...prev, opciones: updated }));
+                            } catch (err) {
+                              console.error("Error subiendo imagen:", err);
+                            }
+                          }
+                        }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDragEnter={() => {
+                          const updated = [...newQuestion.opciones];
+                          updated[i].isDragging = true;
+                          setNewQuestion(prev => ({ ...prev, opciones: updated }));
+                        }}
+                        onDragLeave={() => {
+                          const updated = [...newQuestion.opciones];
+                          updated[i].isDragging = false;
+                          setNewQuestion(prev => ({ ...prev, opciones: updated }));
+                        }}
+                      >
+                        {opt.content ? (
+                          <div className="space-y-2">
+                            <img src={opt.content} alt="preview" className="max-h-20 mx-auto rounded" />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = [...newQuestion.opciones];
+                                updated[i].content = "";
+                                setNewQuestion(prev => ({ ...prev, opciones: updated }));
+                              }}
+                              className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
+                            >
+                              Quitar imagen
+                            </button>
+                          </div>
+                        ) : (
+                          "Arrastra y suelta una imagen aquí"
+                        )}
+                      </div>
                     )}
 
                     {/* Seleccionar como respuesta correcta */}
@@ -850,7 +902,12 @@ const handleSubmitEditAssignment = async (e) => {
                       onClick={() => {
                         const updated = [...newQuestion.opciones];
                         updated.splice(i, 1);
-                        setNewQuestion(prev => ({ ...prev, opciones: updated }));
+                        // Si borramos la opción que era la correcta, limpiar respuesta_correcta
+                        if (newQuestion.respuesta_correcta === opt.content) {
+                          setNewQuestion(prev => ({ ...prev, opciones: updated, respuesta_correcta: '' }));
+                        } else {
+                          setNewQuestion(prev => ({ ...prev, opciones: updated }));
+                        }
                       }}
                       className="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-white"
                     >
@@ -858,6 +915,7 @@ const handleSubmitEditAssignment = async (e) => {
                     </button>
                   </div>
                 ))}
+                
                 <button
                   type="button"
                   onClick={() =>
@@ -866,58 +924,84 @@ const handleSubmitEditAssignment = async (e) => {
                       opciones: [...(prev.opciones || []), { type: "text", content: "" }]
                     }))
                   }
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded mt-2"
                 >
                   Añadir Opción
                 </button>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Respuesta para Verdadero/Falso */}
+      
+          <div>
             {newQuestion.tipo === "true_false" && (
-              <select
-                value={newQuestion.respuesta_correcta}
-                onChange={e => setNewQuestion(prev => ({ ...prev, respuesta_correcta: e.target.value }))}
-                className="w-full p-3 rounded border border-slate-600 bg-slate-700 focus:ring-2 focus:ring-green-500"
-              >
-                <option value="">Seleccione respuesta</option>
-                <option value="Verdader">Verdadero</option>
-                <option value="Falso">Falso</option>
-              </select>
+              <div>
+                <select
+                  value={newQuestion.respuesta_correcta}
+                  onChange={e => setNewQuestion(prev => ({ ...prev, respuesta_correcta: e.target.value }))}
+                  className={`w-full p-3 rounded border bg-slate-700 focus:ring-2 focus:ring-green-500 ${
+                    !newQuestion.respuesta_correcta ? 'border-red-500' : 'border-slate-600'
+                  }`}
+                >
+                  <option value="">Seleccione respuesta *</option>
+                  <option value="Verdadero">Verdadero</option>
+                  <option value="Falso">Falso</option>
+                </select>
+                {!newQuestion.respuesta_correcta && <p className="text-red-400 text-sm mt-1">Selecciona una respuesta</p>}
+              </div>
             )}
 
-            {/* Respuesta numérica */}
             {newQuestion.tipo === "numeric" && (
-              <input
-                type="number"
-                placeholder="Respuesta correcta"
-                value={newQuestion.respuesta_correcta}
-                onChange={e => setNewQuestion(prev => ({ ...prev, respuesta_correcta: e.target.value }))}
-                className="w-full p-3 rounded border border-slate-600 bg-slate-700 focus:ring-2 focus:ring-green-500"
-              />
+              <div>
+                <input
+                  type="number"
+                  placeholder="Respuesta correcta *"
+                  value={newQuestion.respuesta_correcta}
+                  onChange={e => setNewQuestion(prev => ({ ...prev, respuesta_correcta: e.target.value }))}
+                  className={`w-full p-3 rounded border bg-slate-700 focus:ring-2 focus:ring-green-500 ${
+                    !newQuestion.respuesta_correcta ? 'border-red-500' : 'border-slate-600'
+                  }`}
+                />
+                {!newQuestion.respuesta_correcta && <p className="text-red-400 text-sm mt-1">Ingresa la respuesta correcta</p>}
+              </div>
             )}
           </div>
+        </div>
 
-          {/* Botón guardar */}
-          <div className="col-span-2 flex justify-end gap-3 mt-6">
-            <button
-              type="button"
-              onClick={() => setOpenModal(null)}
-              className="px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 rounded font-semibold"
-            >
-              Guardar Pregunta
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* Botón guardar - DESHABILITADO SI HAY ERRORES */}
+        <div className="col-span-2 flex justify-end gap-3 mt-6">
+          <button
+            type="button"
+            onClick={() => setOpenModal(null)}
+            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={
+              !newQuestion.titulo || 
+              !newQuestion.enunciado || 
+              !newQuestion.respuesta_correcta || 
+              !newQuestion.pillar || 
+              newQuestion.pillar.length === 0 ||
+              (newQuestion.tipo === 'multiple_option' && newQuestion.opciones?.length === 0)
+            }
+            className={`px-6 py-2 rounded font-semibold ${
+              (!newQuestion.titulo || !newQuestion.enunciado || !newQuestion.respuesta_correcta || 
+               !newQuestion.pillar || newQuestion.pillar.length === 0 ||
+               (newQuestion.tipo === 'multiple_option' && newQuestion.opciones?.length === 0))
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-green-600 hover:bg-green-700'
+            }`}
+          >
+            Guardar Pregunta
+          </button>
+        </div>
+      </form>
     </div>
-  )}
+  </div>
+)}
 
   {/* Editar Pregunta */}
   {openModal === 'editQuestion' && editQuestion && (
@@ -992,21 +1076,21 @@ const handleSubmitEditAssignment = async (e) => {
 <div
   className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
     ${block.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...editQuestion.question_content];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setEditQuestion(prev => ({ ...prev, question_content: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
+onDrop={async (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    try {
+      const { path } = await uploadFile(file); 
+      const updated = [...editQuestion.question_content];
+      updated[i].content = path; 
+      updated[i].isDragging = false;
+      setEditQuestion(prev => ({ ...prev, question_content: updated }));
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
     }
-  }}
+  }
+}}
   onDragOver={(e) => e.preventDefault()}
   onDragEnter={() => {
     const updated = [...editQuestion.question_content];
@@ -1159,21 +1243,22 @@ const handleSubmitEditAssignment = async (e) => {
                      <div
   className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
     ${opt.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...editQuestion.opciones];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setEditQuestion(prev => ({ ...prev, opciones: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
+ onDrop={async (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    try {
+      const { path } = await uploadFile(file); 
+      const updated = [...editQuestion.opciones];
+      updated[i].content = path; 
+      updated[i].isDragging = false;
+      setEditQuestion(prev => ({ ...prev, opciones: updated }));
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
     }
-  }}
+  }
+}}
+
   onDragOver={(e) => e.preventDefault()}
   onDragEnter={() => {
     const updated = [...editQuestion.opciones];

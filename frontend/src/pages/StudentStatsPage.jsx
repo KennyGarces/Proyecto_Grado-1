@@ -36,7 +36,7 @@ function StudentStatsPage() {
       const studentId = storedUser.id;
 
       try {
-        const res = await fetch(`http://localhost:3000/api/stats/student/${studentId}`);
+       const res = await fetch(`/api/stats/student/${studentId}`, {credentials: 'include' });
         if (!res.ok) {
           throw new Error(`Error en la API: ${res.status}`);
         }

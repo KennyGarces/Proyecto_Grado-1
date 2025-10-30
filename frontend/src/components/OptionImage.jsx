@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getSignedUrl } from "../services/storage";
 
 function OptionImage({ path }) {
-  const [url, setUrl] = useState(null); // Estado para guardar la URL firmada
+  const [url, setUrl] = useState(null); 
 
   useEffect(() => {
     // Obtiene la URL firmada cuando cambia la ruta

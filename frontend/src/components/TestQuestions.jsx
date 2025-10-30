@@ -7,14 +7,14 @@ function TestQuestions() {
     const testFetch = async () => {
       try {
         console.log("--- INICIANDO PRUEBA DE CARGA DE PREGUNTAS ---");
-        const questions = await getQuestionsAPI(); // Llama API de preguntas
+        const questions = await getQuestionsAPI(); 
         console.log("--- DATOS RECIBIDOS DEL BACKEND ---");
-        console.table(questions); // Muestra los datos en una tabla
+        console.table(questions); 
       } catch (error) {
-        console.error("--- ERROR EN LA PRUEBA ---", error); // Captura errores
+        console.error("--- ERROR EN LA PRUEBA ---", error); 
       }
     };
-    testFetch(); // Ejecuta prueba al montar componente
+    testFetch();
   }, []);
 
   return (

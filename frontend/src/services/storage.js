@@ -1,3 +1,4 @@
+// src/services/storage.js
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -9,7 +10,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Subir archivo a Supabase Storage y devolver URL pública
 export async function uploadFile(file) {
   try {
     const fileName = `${Date.now()}-${file.name}`;
@@ -25,7 +25,8 @@ export async function uploadFile(file) {
       .from("uploads")
       .getPublicUrl(fileName);
 
-    return publicData.publicUrl; 
+    // lo devolvemos con la misma forma que el backend
+    return { path: publicData.publicUrl };
   } catch (err) {
     console.error("Error en uploadFile:", err);
     throw err;
