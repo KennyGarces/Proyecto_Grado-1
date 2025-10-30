@@ -19,29 +19,13 @@ const profileRoutes = require('./routes/profile.routes');
 const statsRoutes = require('./routes/stats.routes');
 const uploadsRouter = require('./routes/uploads');
 
+// Configuración de CORS
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // ajusta según tu frontend
+  credentials: true, // permite cookies
+};
 
-// Configuración de CORS MEJORADA
-app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://172.20.10.5:5173",
-      "http://192.168.1.2:5173"
-    ];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('Origin no permitido pero permitiendo:', origin);
-      callback(null, true);
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
-}));
-
+// Si está en producción detrás de un proxy (Heroku, Vercel, Nginx, etc.)
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
