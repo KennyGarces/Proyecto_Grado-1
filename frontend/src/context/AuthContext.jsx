@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
     // Cierra sesión limpiando backend y localStorage
   const logout = async () => {
     try {
-      await fetch("http://localhost:3000/api/auth/logout", {
+      await fetch("http://localhost:5173/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });

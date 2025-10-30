@@ -1,6 +1,6 @@
 const supabase = require("../config/supabaseClient");
 
-//Estadísticas de un estudiante
+//Estadísticas de un estudiante - VERSIÓN CORREGIDA
 async function getStudentStats(req, res) {
   try {
     const { id } = req.params;
@@ -17,41 +17,51 @@ async function getStudentStats(req, res) {
     const total_score = summary.reduce((acc, s) => acc + (s.mission_score || 0), 0);
     const total_resets = summary.reduce((acc, s) => acc + (s.reset_count || 0), 0);
 
-    // Contar respuestas incorrectas
-    const { data: errors, error: errorCount } = await supabase
-      .from("student_answers")
-      .select("id", { count: "exact" })
-      .eq("student_id", id)
-      .eq("is_correct", false);
-
-    if (errorCount) throw errorCount;
-
     // Obtener detalle de las misiones
+    const missionIds = summary.map((s) => s.mission_id);
     const { data: missions, error: missionsError } = await supabase
       .from("missions")
       .select("mission_id, nombre, dificultad")
-      .in(
-        "mission_id",
-        summary.map((s) => s.mission_id)
-      );
+      .in("mission_id", missionIds);
 
     if (missionsError) throw missionsError;
 
-    // Unir misiones con estadísticas del estudiante
+    // Obtener errores POR MISIÓN (esto es lo nuevo y importante)
+    const { data: errorsByMission, error: errorsError } = await supabase
+      .from("student_answers")
+      .select("mission_id, id")
+      .eq("student_id", id)
+      .eq("is_correct", false)
+      .in("mission_id", missionIds);
+
+    if (errorsError) throw errorsError;
+
+    // Contar errores por misión
+    const missionErrors = {};
+    if (errorsByMission) {
+      errorsByMission.forEach(error => {
+        missionErrors[error.mission_id] = (missionErrors[error.mission_id] || 0) + 1;
+      });
+    }
+
+    // Calcular total de errores (para mantener compatibilidad)
+    const total_errors = Object.values(missionErrors).reduce((sum, count) => sum + count, 0);
+
+    // Unir misiones con estadísticas del estudiante - CORREGIDO
     const missionStats = missions.map((m) => {
       const st = summary.find((s) => s.mission_id === m.mission_id);
       return {
         mission_name: m.nombre,
         dificultad: m.dificultad,
         mission_score: st?.mission_score || 0,
-        errors: errors?.length || 0,
+        errors: missionErrors[m.mission_id] || 0,  // ← ¡CORREGIDO! Errores específicos por misión
         reset_count: st?.reset_count || 0,
       };
     });
 
     res.json({
       total_score,
-      total_errors: errors?.length || 0,
+      total_errors,
       total_resets,
       missions: missionStats,
     });

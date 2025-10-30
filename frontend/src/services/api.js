@@ -1,5 +1,5 @@
 // La URL base de nuestro backend
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5173/api";
 
 // Función para crear un nuevo grupo
 export const createGroupAPI = async (groupData) => {
@@ -463,7 +463,7 @@ export const getProfessorStatsAPI = async (professorId) => {
 };
 
 
-// ✅ Obtener estadísticas del estudiante logueado (con cookie httpOnly)
+//  Obtener estadísticas del estudiante logueado (con cookie httpOnly)
 export const getMyStatsAPI = async () => {
   const response = await fetch(`${BASE_URL}/stats/my`, {
     method: 'GET',

@@ -1,30 +1,30 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getProfileAPI } from '../services/api';
+import { getProfileAPI } from '../services/api'; // Solo getProfileAPI
 
 function Login() {
-  const [email, setEmail] = useState(''); // Estado para el correo
-  const [password, setPassword] = useState(''); // Estado para la contraseña
-  const [message, setMessage] = useState(''); // Estado para mostrar mensajes
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const navigate = useNavigate(); // Hook para redirección
-  const { login } = useContext(AuthContext); // Acceso al contexto de autenticación
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Previene recarga del formulario
+    event.preventDefault();
     setMessage('');
 
     try {
-      // Hacemos la petición al backend para login
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+      //  USA URL RELATIVA en lugar de localhost hardcodeado
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', 
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json(); // Respuesta del backend
+      const data = await response.json();
       console.log('Paquete recibido del backend:', data);
 
       if (!response.ok) {
@@ -32,12 +32,11 @@ function Login() {
         return;
       }
 
-      // Pedimos el perfil completo al backend
+      // El resto del código igual...
       try {
         const profile = await getProfileAPI();
-        login(profile); // Guardamos el perfil en el contexto
-        localStorage.setItem('user', JSON.stringify(profile)); 
-
+        login(profile);
+        localStorage.setItem('user', JSON.stringify(profile));
         console.log('Perfil cargado:', profile);
 
         if (profile.role === "Profesor" || profile.role === "'Profesor'") {
@@ -47,9 +46,7 @@ function Login() {
         }
       } catch (err) {
         console.error("Error obteniendo perfil:", err);
-
-        // Si falla, usamos el usuario del login
-        login(data.user); 
+        login(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
 
         if (data.user.role === "Profesor" || data.user.role === "'Profesor'") {
@@ -58,9 +55,8 @@ function Login() {
           navigate('/student');
         }
       }
-
     } catch (error) {
-      setMessage('Error de conexión. Inténtalo de nuevo.'); // Error de red
+      setMessage('Error de conexión. Inténtalo de nuevo.');
       console.error('El error detallado es:', error);
     }
   };

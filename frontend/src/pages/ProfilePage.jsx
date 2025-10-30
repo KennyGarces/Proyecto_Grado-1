@@ -101,7 +101,7 @@ const handleSubmit = async (e) => {
           // Cerrar popup y mostrar confirmación
     setShowEditPopup(false);
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+    setTimeout(() => setShowSuccess(false), 5173);
   } catch (err) {
     setMessage(err.message);
   }

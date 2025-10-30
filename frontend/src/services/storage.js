@@ -25,7 +25,7 @@ export async function uploadFile(file) {
       .from("uploads")
       .getPublicUrl(fileName);
 
-    // 👇 lo devolvemos con la misma forma que el backend
+    //  lo devolvemos con la misma forma que el backend
     return { path: publicData.publicUrl };
   } catch (err) {
     console.error("Error en uploadFile:", err);

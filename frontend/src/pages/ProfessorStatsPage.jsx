@@ -47,18 +47,14 @@ function ProfessorStatsPage() {
 
       try {
         // Obtener estadísticas por estudiante
-        const res = await fetch(
-          `http://localhost:3000/api/stats/professor/${professorId}`
-        );
+        const res = await fetch(`/api/stats/professor/${professorId}`, {credentials: 'include'});
         if (!res.ok)
           throw new Error("Error al cargar estadísticas de estudiantes");
         const data = await res.json();
         setStats(data);
 
         // Obtener estadísticas agrupadas por pilar del pensamiento computacional
-        const resPillars = await fetch(
-          `http://localhost:3000/api/stats/professor/${professorId}/pillars`
-        );
+        const resPillars = await fetch(`/api/stats/professor/${professorId}/pillars`, {credentials: 'include'});
         if (!resPillars.ok)
           throw new Error("Error al cargar estadísticas por pilar");
         const pillarsData = await resPillars.json();
