@@ -619,54 +619,55 @@ const handleSubmitEditAssignment = async (e) => {
                 ) : (
                   <div
                     className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
-    ${block.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...newQuestion.question_content];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setNewQuestion(prev => ({ ...prev, question_content: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
-    }
-  }}
-  onDragOver={(e) => e.preventDefault()}
-  onDragEnter={() => {
-    const updated = [...newQuestion.question_content];
-    updated[i].isDragging = true;
-    setNewQuestion(prev => ({ ...prev, question_content: updated }));
-  }}
-  onDragLeave={() => {
-    const updated = [...newQuestion.question_content];
-    updated[i].isDragging = false;
-    setNewQuestion(prev => ({ ...prev, question_content: updated }));
-  }}
->
-  {block.content ? (
-    <div className="space-y-2">
-      <img src={block.content} alt="enunciado" className="max-h-40 mx-auto rounded" />
-      <button
-        type="button"
-        onClick={() => {
-          const updated = [...newQuestion.question_content];
-          updated[i].content = "";
-          setNewQuestion(prev => ({ ...prev, question_content: updated }));
-        }}
-        className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
-      >
-        Quitar imagen
-      </button>
-    </div>
-  ) : (
-    "Arrastra y suelta una imagen aquí"
-  )}
-                  </div>
-                )}
+                    ${block.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
+                onDrop={async (e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files[0];
+                  if (file) {
+                    try {
+                      const { path } = await uploadFile(file);
+                      const updated = [...newQuestion.question_content]; // ✅ usamos newQuestion
+                      updated[i].content = path;
+                      updated[i].isDragging = false;
+                      setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                    } catch (err) {
+                      console.error("Error subiendo imagen:", err);
+                    }
+                  }
+                }}
+
+                  onDragOver={(e) => e.preventDefault()}
+                  onDragEnter={() => {
+                    const updated = [...newQuestion.question_content];
+                    updated[i].isDragging = true;
+                    setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                  }}
+                  onDragLeave={() => {
+                    const updated = [...newQuestion.question_content];
+                    updated[i].isDragging = false;
+                    setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                  }}
+                >
+                  {block.content ? (
+                    <div className="space-y-2">
+                      <img src={block.content} alt="enunciado" className="max-h-40 mx-auto rounded" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = [...newQuestion.question_content];
+                          updated[i].content = "";
+                          setNewQuestion(prev => ({ ...prev, question_content: updated }));
+                        }}
+                        className="text-sm px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
+                      >
+                        Quitar imagen
+                      </button>
+                    </div>
+                  ) : (
+                    "Arrastra y suelta una imagen aquí"
+                  )}
+                                  </div>
+                                )}
 
                 {/* Botón borrar */}
                 <button
@@ -788,20 +789,21 @@ const handleSubmitEditAssignment = async (e) => {
   className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
     ${opt.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
   onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...newQuestion.opciones];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setNewQuestion(prev => ({ ...prev, opciones: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    try {
+      const { path } = await uploadFile(file); // obtenemos la URL pública
+      const updated = [...newQuestion.opciones];
+      updated[i].content = path; // ahora se guarda en opciones
+      updated[i].isDragging = false;
+      setNewQuestion(prev => ({ ...prev, opciones: updated }));
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
     }
-  }}
+  }
+}}
+
   onDragOver={(e) => e.preventDefault()}
   onDragEnter={() => {
     const updated = [...newQuestion.opciones];
@@ -992,21 +994,21 @@ const handleSubmitEditAssignment = async (e) => {
 <div
   className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
     ${block.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...editQuestion.question_content];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setEditQuestion(prev => ({ ...prev, question_content: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
+onDrop={async (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    try {
+      const { path } = await uploadFile(file); // ← destructuramos el path
+      const updated = [...editQuestion.question_content];
+      updated[i].content = path; // ahora sí existe
+      updated[i].isDragging = false;
+      setEditQuestion(prev => ({ ...prev, question_content: updated }));
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
     }
-  }}
+  }
+}}
   onDragOver={(e) => e.preventDefault()}
   onDragEnter={() => {
     const updated = [...editQuestion.question_content];
@@ -1159,21 +1161,22 @@ const handleSubmitEditAssignment = async (e) => {
                      <div
   className={`flex-1 p-2 border-2 border-dashed rounded text-center cursor-pointer transition 
     ${opt.isDragging ? "border-blue-400 bg-blue-900/30" : "border-slate-600 bg-slate-800"}`}
-  onDrop={async (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      try {
-        const publicUrl = await uploadFile(file);
-        const updated = [...editQuestion.opciones];
-        updated[i].content = publicUrl;
-        updated[i].isDragging = false;
-        setEditQuestion(prev => ({ ...prev, opciones: updated }));
-      } catch (err) {
-        console.error("Error subiendo imagen:", err);
-      }
+ onDrop={async (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    try {
+      const { path } = await uploadFile(file); // obtenemos la URL pública
+      const updated = [...editQuestion.opciones];
+      updated[i].content = path; // ahora se guarda en opciones
+      updated[i].isDragging = false;
+      setEditQuestion(prev => ({ ...prev, opciones: updated }));
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
     }
-  }}
+  }
+}}
+
   onDragOver={(e) => e.preventDefault()}
   onDragEnter={() => {
     const updated = [...editQuestion.opciones];

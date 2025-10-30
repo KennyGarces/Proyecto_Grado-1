@@ -116,33 +116,38 @@ const validateToken = async (req, res) => {
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
 
-      // Renovar token
+      // Renovar token (misma configuración que en login)
       const newToken = jwt.sign(
         { id: user.id, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '5h' }
       );
 
-      res.cookie('token', newToken, {
+      res.cookie("token", newToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 5,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 5, // 5h
       });
 
       res.json({ user });
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error validando token' });
+    res.status(500).json({ error: "Error validando token" });
   }
 };
 
 // Cierra sesión eliminando la cookie del token
 const logout = (req, res) => {
-  res.clearCookie('token');
-  res.json({ message: 'Sesión cerrada correctamente' });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
+  res.json({ message: "Sesión cerrada correctamente" });
 };
+
 
 module.exports = {
   register,

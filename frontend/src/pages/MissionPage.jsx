@@ -103,7 +103,7 @@ function MissionPage() {
 
         {/* Datos de progreso */}
         <p className="text-lg text-slate-300 mb-4">
-          ✅ {correctlyAnsweredCount} / {totalQuestions} niveles completados
+          ✅ {correctlyAnsweredCount} / {totalQuestions} Intentos
         </p>
         <p className="text-lg text-slate-300 mb-6">
           🎯 Puntaje: {mission.mission_score ?? 0} puntos
