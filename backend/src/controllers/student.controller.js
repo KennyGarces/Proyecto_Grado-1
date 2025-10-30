@@ -27,10 +27,10 @@ const getMyMissions = async (req, res) => {
 
     // Reestructurar datos para el frontend
     const structuredData = data.map(item => {
-      if (!item.groups) return null; // Filtra en caso de datos inconsistentes
+      if (!item.groups) return null; 
       
       const group = item.groups;
-      const missions = group.mission_assignments.map(ma => ma.missions).filter(Boolean); // filter(Boolean) quita posibles nulos
+      const missions = group.mission_assignments.map(ma => ma.missions).filter(Boolean); 
       
       return {
         // Devolvemos una copia de la información del grupo

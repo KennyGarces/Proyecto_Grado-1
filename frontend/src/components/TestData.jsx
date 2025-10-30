@@ -7,17 +7,17 @@ function TestData() {
     const testFetch = async () => {
       try {
         console.log("--- CARGANDO GRUPOS ---");
-        const groups = await getGroupsAPI();  // Llama API de grupos
+        const groups = await getGroupsAPI();  
         console.table(groups);
 
         console.log("--- CARGANDO MISIONES ---");
-        const missions = await getMissionsAPI(); // Llama API de misiones
+        const missions = await getMissionsAPI(); 
         console.table(missions);
       } catch (error) {
-        console.error("--- ERROR EN LA PRUEBA ---", error); // Captura errores
+        console.error("--- ERROR EN LA PRUEBA ---", error); 
       }
     };
-    testFetch(); // Ejecuta prueba al montar componente
+    testFetch();
   }, []);
 
   return (
