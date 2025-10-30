@@ -17,7 +17,6 @@ async function getStudentStats(req, res) {
     const total_score = summary.reduce((acc, s) => acc + (s.mission_score || 0), 0);
     const total_resets = summary.reduce((acc, s) => acc + (s.reset_count || 0), 0);
 
-    
     // Obtener detalle de las misiones
     const missionIds = summary.map((s) => s.mission_id);
     const { data: missions, error: missionsError } = await supabase

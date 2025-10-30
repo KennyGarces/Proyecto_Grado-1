@@ -2,11 +2,9 @@ const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabaseClient');
 const bcrypt = require('bcrypt');
 
-
 const test = (req, res) => {
   res.send('¡Hola, mundo desde el backend de LogiX!');
 };
-
 
 const register = async (req, res) => {
   try {
@@ -16,9 +14,7 @@ const register = async (req, res) => {
       return res.status(400).json({ error: 'Rol no válido.' });
     }
 
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
 
     const { data, error } = await supabase
       .from('users')
@@ -37,11 +33,10 @@ const register = async (req, res) => {
   }
 };
 
-
+//  FUNCIÓN LOGIN CORREGIDA
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
 
     const { data: user, error } = await supabase
       .from('users')
@@ -53,23 +48,21 @@ const login = async (req, res) => {
       return res.status(400).json({ error: 'Credenciales inválidas' });
     }
 
-
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: 'Credenciales inválidas' });
     }
 
-    
     const payload = { id: user.id, role: user.role };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' });
 
-
+    //  CONFIGURACIÓN DE COOKIES CORREGIDA
     const cookieOptions = {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 5, // 5 horas
-      secure: false, // FALSE en desarrollo
-      sameSite: 'lax', // LAX en desarrollo
-      path: '/' // AGREGAR path
+      secure: false, // ← FALSE en desarrollo
+      sameSite: 'lax', // ← LAX en desarrollo
+      path: '/' // ← AGREGAR path
     };
 
     res.cookie('token', token, cookieOptions);
@@ -92,7 +85,7 @@ const login = async (req, res) => {
   }
 };
 
-
+//  FUNCIÓN VALIDATE TOKEN CORREGIDA
 const validateToken = async (req, res) => {
   try {
     const token = req.cookies.token;
@@ -122,11 +115,11 @@ const validateToken = async (req, res) => {
         { expiresIn: '5h' }
       );
 
-
+      //  MISMAS CONFIGURACIONES DE COOKIE
       res.cookie("token", newToken, {
         httpOnly: true,
-        secure: false, // FALSE
-        sameSite: 'lax', // LAX
+        secure: false, // ← FALSE
+        sameSite: 'lax', // ← LAX
         maxAge: 1000 * 60 * 60 * 5,
         path: '/'
       });
@@ -139,12 +132,12 @@ const validateToken = async (req, res) => {
   }
 };
 
-
+//  FUNCIÓN LOGOUT CORREGIDA
 const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // FALSE
-    sameSite: 'lax', // LAX
+    secure: false, // ← FALSE
+    sameSite: 'lax', // ← LAX
     path: '/'
   });
   res.json({ message: "Sesión cerrada correctamente" });

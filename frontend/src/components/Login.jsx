@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getProfileAPI } from '../services/api'; 
+import { getProfileAPI } from '../services/api'; // Solo getProfileAPI
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ function Login() {
     setMessage('');
 
     try {
-
+      //  USA URL RELATIVA en lugar de localhost hardcodeado
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,7 @@ function Login() {
         return;
       }
 
-    
+      // El resto del código igual...
       try {
         const profile = await getProfileAPI();
         login(profile);

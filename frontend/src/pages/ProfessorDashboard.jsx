@@ -558,6 +558,7 @@ const handleSubmitEditAssignment = async (e) => {
     <div className="bg-slate-800 w-11/12 h-[90vh] rounded-xl p-6 overflow-y-auto">
       <h2 className="text-3xl font-bold mb-6">Crear Pregunta</h2>
 
+      {/* 🔴 MOSTRAR ERRORES DE VALIDACIÓN */}
       <div className="space-y-2 mb-4">
         {(!newQuestion.pillar || newQuestion.pillar.length === 0) && (
           <div className="p-3 bg-red-900 border border-red-600 rounded-lg flex items-center gap-2">
@@ -932,7 +933,7 @@ const handleSubmitEditAssignment = async (e) => {
             </div>
           )}
 
-      
+          {/* Respuesta correcta - CON VALIDACIÓN VISUAL */}
           <div>
             {newQuestion.tipo === "true_false" && (
               <div>
@@ -1081,9 +1082,9 @@ onDrop={async (e) => {
   const file = e.dataTransfer.files[0];
   if (file) {
     try {
-      const { path } = await uploadFile(file); 
+      const { path } = await uploadFile(file); // ← destructuramos el path
       const updated = [...editQuestion.question_content];
-      updated[i].content = path; 
+      updated[i].content = path; // ahora sí existe
       updated[i].isDragging = false;
       setEditQuestion(prev => ({ ...prev, question_content: updated }));
     } catch (err) {
@@ -1248,9 +1249,9 @@ onDrop={async (e) => {
   const file = e.dataTransfer.files[0];
   if (file) {
     try {
-      const { path } = await uploadFile(file); 
+      const { path } = await uploadFile(file); // obtenemos la URL pública
       const updated = [...editQuestion.opciones];
-      updated[i].content = path; 
+      updated[i].content = path; // ahora se guarda en opciones
       updated[i].isDragging = false;
       setEditQuestion(prev => ({ ...prev, opciones: updated }));
     } catch (err) {
