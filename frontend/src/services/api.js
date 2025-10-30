@@ -51,7 +51,7 @@ export const updateGroupAPI = async (id, data) => {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-     
+
     },
     credentials: 'include',
     body: JSON.stringify(data)
@@ -105,7 +105,7 @@ export const getQuestionsAPI = async () => {
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'include' 
+    credentials: 'include'
   });
 
   if (!response.ok) {
@@ -123,7 +123,7 @@ export const updateQuestionAPI = async (id, data) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify(data)
   });
 
@@ -139,7 +139,7 @@ export const updateQuestionAPI = async (id, data) => {
 export const deleteQuestionAPI = async (id) => {
   const response = await fetch(`${BASE_URL}/questions/${id}`, {
     method: 'DELETE',
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -159,7 +159,7 @@ export const createMissionAPI = async (missionData) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify(missionData),
   });
 
@@ -178,7 +178,7 @@ export const getMissionsAPI = async () => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -196,7 +196,7 @@ export const updateMissionAPI = async (id, data) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -213,7 +213,7 @@ export const updateMissionAPI = async (id, data) => {
 export const deleteMissionAPI = async (id) => {
   const response = await fetch(`${BASE_URL}/missions/${id}`, {
     method: 'DELETE',
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -226,7 +226,7 @@ export const deleteMissionAPI = async (id) => {
 
 // Función para asignar una misión a un grupo
 export const assignMissionAPI = async (assignmentData) => {
-  // assignmentData será un objeto como: { mission_id: 1, group_id: 2 }
+
   const response = await fetch(`${BASE_URL}/assignments`, {
     method: 'POST',
     headers: {
@@ -298,13 +298,13 @@ export const deleteAssignmentAPI = async (mission_id, group_id) => {
 
 // Función para añadir un estudiante a un grupo
 export const addStudentToGroupAPI = async (data) => {
-  // data será un objeto como: { email: 'student@mail.com', group_id: 5 }
+
   const response = await fetch(`${BASE_URL}/groups/add-student`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -323,7 +323,7 @@ export const joinGroupAPI = async (joinCode) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify({ join_code: joinCode }),
   });
 
@@ -342,7 +342,7 @@ export const getMyMissionsAPI = async () => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -360,7 +360,7 @@ export const getMissionDetailsAPI = async (missionId) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -388,7 +388,7 @@ export const submitAnswerAPI = async (answerData) => {
     throw new Error(errorData.error || 'No se pudo enviar la respuesta');
   }
 
-  return response.json(); 
+  return response.json();
 };
 
 // Resetear el progreso de una misión
@@ -398,7 +398,7 @@ export const resetMissionProgressAPI = async (missionId) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify({ mission_id: missionId }),
   });
 
@@ -425,7 +425,7 @@ export const getProfileAPI = async () => {
     throw new Error(err.error || 'No se pudo obtener el perfil');
   }
 
-  return response.json(); 
+  return response.json();
 };
 
 // Actualizar perfil del usuario autenticado
@@ -435,7 +435,7 @@ export const updateProfileAPI = async (profileData) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    credentials: 'include', 
+    credentials: 'include',
     body: JSON.stringify(profileData),
   });
 
@@ -451,7 +451,7 @@ export const updateProfileAPI = async (profileData) => {
 export const getProfessorStatsAPI = async (professorId) => {
   const response = await fetch(`${BASE_URL}/stats/professor/${professorId}`, {
     method: 'GET',
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -467,7 +467,7 @@ export const getProfessorStatsAPI = async (professorId) => {
 export const getMyStatsAPI = async () => {
   const response = await fetch(`${BASE_URL}/stats/my`, {
     method: 'GET',
-    credentials: 'include', 
+    credentials: 'include',
   });
 
   if (!response.ok) {

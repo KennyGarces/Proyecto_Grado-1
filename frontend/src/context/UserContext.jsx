@@ -26,7 +26,7 @@ export const UserProvider = ({ children }) => {
     }
   }, [user]);
 
-    // Proveer contexto a los hijos
+
   return (
     <UserContext.Provider value={{ user, setUser, loading }}>
       {children}

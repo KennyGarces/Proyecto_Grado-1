@@ -109,7 +109,6 @@ function ProfessorStatsPage() {
         👨‍🏫 Estadísticas de mis Estudiantes
       </h1>
 
-      {/* 🔙 Botón de regresar */}
       <button
         onClick={() => navigate("/professor")}
         className="mb-8 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-xl shadow-lg transition"
@@ -117,7 +116,7 @@ function ProfessorStatsPage() {
         ⬅ Regresar
       </button>
 
-      {/* 📊 Retroalimentación general por pilar */}
+
       <div className="w-full max-w-4xl bg-slate-800 rounded-2xl shadow-lg border border-slate-700 p-6 mb-10">
         <h2 className="text-2xl font-semibold text-yellow-300 mb-4">
           📊 Rendimiento promedio por Pilar
@@ -151,7 +150,7 @@ function ProfessorStatsPage() {
         )}
       </div>
 
-      {/* 👥 Estadísticas por estudiante */}
+      {/* Estadísticas por estudiante*/}
       {stats.length === 0 ? (
         <p className="text-slate-400">Aún no hay datos de estudiantes.</p>
       ) : (

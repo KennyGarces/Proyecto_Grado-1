@@ -176,7 +176,7 @@ const handleUpdateQuestion = (q) => {
       opcionesParsed = raw.map(opt =>
         typeof opt === "string"
           ? { type: "text", content: opt }
-          : opt // si ya es { type, content }
+          : opt 
       );
     } catch (e) {
       console.error("Error parseando opciones:", e);

@@ -3,17 +3,17 @@ import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useContext(AuthContext);  // Obtiene usuario y estado de carga del contexto 
+  const { user, loading } = useContext(AuthContext);  
 
   if (loading) {
-    return <div>Cargando...</div>; // Muestra indicador mientras valida sesión
+    return <div>Cargando...</div>; 
   }
 
   if (!user) {
-    return <Navigate to="/" />; // Redirige al inicio si no hay usuario
+    return <Navigate to="/" />; 
   } 
 
-  return children; // Renderiza el contenido protegido si hay sesión
+  return children; 
 };
 
 export default ProtectedRoute;

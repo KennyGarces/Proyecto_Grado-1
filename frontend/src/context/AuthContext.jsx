@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
     let mounted = true;
     const init = async () => {
       try {
-        const profile = await getProfileAPI(); // usa credentials:'include'
+        const profile = await getProfileAPI(); 
         if (!mounted) return;
         setUser(profile);
       } catch (err) {
